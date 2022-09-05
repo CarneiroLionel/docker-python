@@ -1,15 +1,54 @@
-node {
-	def app
-	
-	stage('Clone Repo') {
-		/* Making sure the repo is cloned */
 
-		checkout scm
+pipeline{
+
+	agent any
+
+	environment {
+		DOCKERHUB_CREDENTIALS=credentials('docker-hub-credentials')
 	}
 
-	stage('Build image') {
-	
-	app = docker.build("carneirolionel/docker-python")	
+	stages {
 
+		stage('Build') {
+
+			steps {
+				sh 'docker build -t lionelcarneiro/nodeapp:latest .'
+			}
+		}
+
+		stage('Login') {
+
+			steps {
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
+		}
+
+		stage('Push') {
+
+			steps {
+				sh 'docker push lionelcarneiro/nodeapp:latest'
+			}
+		}
 	}
+
+	post {
+		always {
+			sh 'docker logout'
+		}
+	}
+
 }
+
+	
+
+
+
+
+
+
+
+	
+
+
+
+

@@ -1,6 +1,6 @@
-FROM python:3.8-buster
-RUN pip install --upgrade pip
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY src/ .
-CMD [ "python", "trtest.py"]
+FROM node:13-alpine
+RUN mkdir -p /home/app
+COPY ./* /home/app/
+WORKDIR /home/app
+RUN npm install
+CMD ["node", "server.js"]
